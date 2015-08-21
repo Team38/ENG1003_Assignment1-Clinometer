@@ -1,0 +1,53 @@
+#center-target
+{
+    border: 5px solid black;
+    width: 30px;
+    height: 30px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    border-radius: 50%;
+}
+
+#dark-bubble
+{
+    background-color: darkgreen;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 3;
+}
+
+#pale-bubble
+{
+    background-color: palegreen;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 2;
+}
+
+#bottom-div
+{
+    display: block;
+    position: fixed;
+    width: 90%;
+    text-align: center;
+    bottom: 0;
+    margin: auto;
+}

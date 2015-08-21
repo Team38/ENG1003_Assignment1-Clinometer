@@ -1,0 +1,51 @@
+<!doctype html>
+
+<html lang="en">
+    <head>
+        <!-- These meta tags can be a general template for HTML5 -->
+        <meta charset="utf-8">
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <title>Assignment 1</title>
+        <meta name="description" content="ENG1003 Assignment 1 S2 2015">
+        <meta name="author" content="Moses Yi-Jie Wan">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+        <link rel="shortcut icon" sizes="196x196" href="bubble-icon.png" />
+        <link rel="apple-touch-icon-precomposed" href="bubble-icon.png" />
+
+        <!-- jQuery Mobile Dependencies -->
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+        
+        <!-- Import custom CSS -->
+        <link rel="stylesheet" href="css/custom.css" />
+        
+        
+    </head>
+    <body>
+    
+        
+        <div data-role="page">
+            <div data-role="header">
+                <h1>Spirit Level</h1>
+            </div>
+            <div role="main" class="ui-content">
+                <div id="center-target"></div>
+                <div id="pale-bubble"></div>
+                <div id="dark-bubble"></div>
+                <div id="bottom-div">
+                    <div id="message-area"></div>
+                    <button id="freeze-button" class="ui-btn ui-corner-all" onclick="spiritLevelProcessor.freezeClick()">Freeze</button>
+                </div>
+                
+            </div>
+        </div>  
+        
+        <!-- Import Javascript file for jQuery Mobile -->
+        <script src="js/jquery-2.1.4.min.js"></script>
+        <script src="js/jquery.mobile-1.4.5.min.js"></script>
+        <script src="js/SpiritLevelProcessor.js"></script>
+        <script src="js/UIController.js"></script>
+        <script src="js/main.js"></script>
+        
+    </body>
+</html>
