@@ -38,26 +38,38 @@ freeze-button
     ID of the "Freeze" button
 ****************************************************************************************/
 
-function SpiritLevelProcessor()
-{
-    var self = this;
+function SpiritLevelProcessor() {
+    var self = this,
+        rawMotionData,
+        bufferRecord = {
+            x: [],
+            y: [],
+            z: [],
+        };
 
     var uiController = null;
 
-    self.initialise = function(controller)
-    {
+    self.initialise = function (controller) {
         uiController = controller;
 
         window.addEventListener("devicemotion", handleMotion);
     }
 
-    function handleMotion(event)
-    {
+    function handleMotion(event) {
         // This function handles the new incoming values from the accelerometer
+        var aX = event.accelerationIncludingGravity.x;
+        var aY = event.accelerationIncludingGravity.y;
+        var aZ = event.accelerationIncludingGravity.z;
+
+        var gX = aX / 9.8;
+        var gY = aY / 9.8;
+        var gZ = aZ / 9.8;
+
+        rawMotionData = [gX, gY, gZ];
+        movingAverage(bufferRecord, rawMotionData);
     }
 
-    function movingAverage(buffer, newValue)
-    {
+    function movingAverage(buffer, newValue) {
         // This function handles the Moving Average Filter
 
         // Input:
@@ -69,10 +81,58 @@ function SpiritLevelProcessor()
 
         // Output: filteredValue
         //      This function should return the result of the moving average filter
+        var newX = newValue[0],
+            newY = newValue[1],
+            newZ = newValue[2];
+        buffer.x[buffer.x.length] = newX;
+        buffer.y[buffer.y.length] = newY;
+        buffer.z[buffer.z.length] = newZ;
+
+        if (buffer.x.length > 100) {
+            buffer.x.shift()
+        }
+        if (buffer.y.length > 100) {
+            buffer.y.shift()
+        }
+        if (buffer.z.length > 100) {
+            buffer.z.shift()
+        }
+        console.log(buffer.x)
+        console.log(buffer.y)
+        console.log(buffer.z)
+
+
+        /*
+        var fruits = [];
+        var sum = 0,
+            average = 0;
+        for (i = 0; i <= 20; i++) {
+            if (fruits.length === 10) {
+                fruits.shift();
+                fruits[fruits.length] = i;
+                console.log(fruits);
+            } else {
+                fruits[fruits.length] = i;
+                console.log(fruits);
+            }
+        }
+
+        console.log(fruits);
+
+        for (i = 0; i < fruits.length; i++) {
+            sum += fruits[i];
+
+        }
+
+        console.log(sum);
+
+        average = sum / fruits.length;
+
+        console.log(average);
+        */
     }
 
-    function displayAngle(x,y,z)
-    {
+    function displayAngle(x, y, z) {
         // This function will handle the calculation of the angle from the z-axis and
         // display it on the screen inside a "div" tag with the id of "message-area"
 
@@ -81,27 +141,25 @@ function SpiritLevelProcessor()
         //      each of the axes respectively
     }
 
-    self.freezeClick = function()
-    {
+    self.freezeClick = function () {
         // ADVANCED FUNCTIONALITY
         // ================================================================
         // This function will trigger when the "Freeze" button is pressed
         // The ID of the button is "freeze-button"
     }
 
-    function movingMedian(buffer, newValue)
-    {
-      // ADVANCED FUNCTIONALITY
-      // =================================================================
-      // This function handles the Moving Median Filter
-      // Input:
-      //      buffer
-      //      The buffer in which the function will apply the moving to.
+    function movingMedian(buffer, newValue) {
+        // ADVANCED FUNCTIONALITY
+        // =================================================================
+        // This function handles the Moving Median Filter
+        // Input:
+        //      buffer
+        //      The buffer in which the function will apply the moving to.
 
-      //      newValue
-      //      This should be the newest value that will be pushed into the buffer
+        //      newValue
+        //      This should be the newest value that will be pushed into the buffer
 
-      // Output: filteredValue
-      //      This function should return the result of the moving average filter
+        // Output: filteredValue
+        //      This function should return the result of the moving average filter
     }
 }
