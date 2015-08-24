@@ -134,6 +134,21 @@ function SpiritLevelProcessor() {
         // Input: x,y,z
         //      These values should be the filtered values after the Moving Average for
         //      each of the axes respectively
+        var retVal = document.getElementById("message-area");   
+        
+        var adjLength,
+            angle
+        
+        //calculate the length adjacent to the angle. This, along with the z-axis input, will evaluate the eventual angle.
+        adjLength = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+        
+        
+        //This calculates the angle between the two vectors in degrees using arctan
+        angle = Math.atan(z/adjLength);
+        
+        /*** Not too sure about what comes after this..
+        return retVal.innerHTML = angle ??
+        ***/
     }
 
     self.freezeClick = function () {
