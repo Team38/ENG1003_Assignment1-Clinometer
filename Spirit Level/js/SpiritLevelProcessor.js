@@ -44,7 +44,7 @@ function SpiritLevelProcessor() {
         bufferRecord = {
             x: [],
             y: [],
-            z: [],
+            z: []
         };
 
     var uiController = null;
@@ -57,64 +57,19 @@ function SpiritLevelProcessor() {
 
     function handleMotion(event) {
         // This function handles the new incoming values from the accelerometer
-        var aX = event.accelerationIncludingGravity.x;
-        var aY = event.accelerationIncludingGravity.y;
-        var aZ = event.accelerationIncludingGravity.z;
+        var aX = event.accelerationIncludingGravity.x,
+            aY = event.accelerationIncludingGravity.y,
+            aZ = event.accelerationIncludingGravity.z;
 
-        var gX = aX / 9.8;
-        var gY = aY / 9.8;
-        var gZ = aZ / 9.8;
+        var gX = aX / 9.8,
+            gY = aY / 9.8,
+            gZ = aZ / 9.8;
 
         rawMotionData = [gX, gY, gZ];
         movingAverage(bufferRecord, rawMotionData);
     }
 
     function movingAverage(buffer, newValue) {
-<<<<<<< HEAD
-=======
-        var newX = newValue[0],
-            newY = newValue[1],
-            newZ = newValue[2];
-        var sumX = 0,
-            sumY = 0,
-            sumZ = 0;
-        var avgX = 0,
-            avgY = 0,
-            avgZ = 0;
-        buffer.x[buffer.x.length] = newX;
-        buffer.y[buffer.y.length] = newY;
-        buffer.z[buffer.z.length] = newZ;
-
-        if (buffer.x.length >= 100) {
-            buffer.x.shift()
-            else if (buffer.x.length > 0 && buffer.x.length <100)
-                for (i=0; i < buffer.x.length; i++){
-                sumX = sumX + buffer.x[i];   
-        }
-            avgX = sumX / buffer.x.length;
-        else
-        }
-        if (buffer.y.length >= 100) {
-            buffer.y.shift()
-            else if (buffer.y.length > 0 && buffer.y.length <100)
-                for (j=0; j < buffer.y.length; j++){
-                sumY = sumY + buffer.y[j];   
-        }
-            avgY = sumY / buffer.y.length;
-        else
-        }
-        if (buffer.z.length >= 100) {
-            buffer.z.shift()
-            else if (buffer.z.length > 0 && buffer.z.length <100)
-                for (k=0; k < buffer.z.length; k++){
-                sumZ = sumZ + buffer.z[k];   
-        }
-            avgZ= sumZ / buffer.z.length;
-        else
-        }
-      
-        
->>>>>>> master
         // This function handles the Moving Average Filter
 
         // Input:
@@ -126,14 +81,15 @@ function SpiritLevelProcessor() {
 
         // Output: filteredValue
         //      This function should return the result of the moving average filter
+
         var filteredValues,
             sumX = 0,
             sumY = 0,
             sumZ = 0,
-            average = 0,
             newX = newValue[0],
             newY = newValue[1],
             newZ = newValue[2];
+
         buffer.x[buffer.x.length] = newX;
         buffer.y[buffer.y.length] = newY;
         buffer.z[buffer.z.length] = newZ;
@@ -141,18 +97,23 @@ function SpiritLevelProcessor() {
         if (buffer.x.length > 100) {
             buffer.x.shift()
         }
+
         if (buffer.y.length > 100) {
             buffer.y.shift()
         }
+
         if (buffer.z.length > 100) {
             buffer.z.shift()
         }
+
         for (var i = 0; i < buffer.x.length; i++) {
             sumX += buffer.x[i];
         }
+
         for (var j = 0; j < buffer.y.length; j++) {
             sumY += buffer.y[j];
         }
+
         for (var k = 0; k < buffer.z.length; k++) {
             sumZ += buffer.z[k];
         }
