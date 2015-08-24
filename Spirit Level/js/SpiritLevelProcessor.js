@@ -98,7 +98,7 @@ function SpiritLevelProcessor()
         else
         }
       
-        
+    return [avgX,avgY,avgZ];  
         // This function handles the Moving Average Filter
 
         // Input:
@@ -123,11 +123,20 @@ function SpiritLevelProcessor()
     }
 
     self.freezeClick = function()
-    {
-        // ADVANCED FUNCTIONALITY
+    // ADVANCED FUNCTIONALITY
         // ================================================================
         // This function will trigger when the "Freeze" button is pressed
         // The ID of the button is "freeze-button"
+    {
+        var freeze = {
+            freezeX: avgX,
+            freezeY: avgY,
+            freezeZ: avgZ;
+        };
+        
+        
+            
+        
     }
 
     function movingMedian(buffer, newValue)
