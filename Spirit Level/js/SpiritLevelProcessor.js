@@ -81,7 +81,12 @@ function SpiritLevelProcessor() {
 
         // Output: filteredValue
         //      This function should return the result of the moving average filter
-        var newX = newValue[0],
+        var filteredValues,
+            sumX = 0,
+            sumY = 0,
+            sumZ = 0,
+            average = 0,
+            newX = newValue[0],
             newY = newValue[1],
             newZ = newValue[2];
         buffer.x[buffer.x.length] = newX;
@@ -97,39 +102,23 @@ function SpiritLevelProcessor() {
         if (buffer.z.length > 100) {
             buffer.z.shift()
         }
-        console.log(buffer.x)
-        console.log(buffer.y)
-        console.log(buffer.z)
-
-
-        /*
-        var fruits = [];
-        var sum = 0,
-            average = 0;
-        for (i = 0; i <= 20; i++) {
-            if (fruits.length === 10) {
-                fruits.shift();
-                fruits[fruits.length] = i;
-                console.log(fruits);
-            } else {
-                fruits[fruits.length] = i;
-                console.log(fruits);
-            }
+        for (var i = 0; i < buffer.x.length; i++) {
+            sumX += buffer.x[i];
+        }
+        for (var j = 0; j < buffer.y.length; j++) {
+            sumY += buffer.y[j];
+        }
+        for (var k = 0; k < buffer.z.length; k++) {
+            sumZ += buffer.z[k];
         }
 
-        console.log(fruits);
+        filteredValues = {
+            x: sumX / buffer.x.length,
+            y: sumY / buffer.y.length,
+            z: sumZ / buffer.z.length,
+        };
 
-        for (i = 0; i < fruits.length; i++) {
-            sum += fruits[i];
-
-        }
-
-        console.log(sum);
-
-        average = sum / fruits.length;
-
-        console.log(average);
-        */
+        return filteredValues
     }
 
     function displayAngle(x, y, z) {
