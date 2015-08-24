@@ -70,6 +70,51 @@ function SpiritLevelProcessor() {
     }
 
     function movingAverage(buffer, newValue) {
+<<<<<<< HEAD
+=======
+        var newX = newValue[0],
+            newY = newValue[1],
+            newZ = newValue[2];
+        var sumX = 0,
+            sumY = 0,
+            sumZ = 0;
+        var avgX = 0,
+            avgY = 0,
+            avgZ = 0;
+        buffer.x[buffer.x.length] = newX;
+        buffer.y[buffer.y.length] = newY;
+        buffer.z[buffer.z.length] = newZ;
+
+        if (buffer.x.length >= 100) {
+            buffer.x.shift()
+            else if (buffer.x.length > 0 && buffer.x.length <100)
+                for (i=0; i < buffer.x.length; i++){
+                sumX = sumX + buffer.x[i];   
+        }
+            avgX = sumX / buffer.x.length;
+        else
+        }
+        if (buffer.y.length >= 100) {
+            buffer.y.shift()
+            else if (buffer.y.length > 0 && buffer.y.length <100)
+                for (j=0; j < buffer.y.length; j++){
+                sumY = sumY + buffer.y[j];   
+        }
+            avgY = sumY / buffer.y.length;
+        else
+        }
+        if (buffer.z.length >= 100) {
+            buffer.z.shift()
+            else if (buffer.z.length > 0 && buffer.z.length <100)
+                for (k=0; k < buffer.z.length; k++){
+                sumZ = sumZ + buffer.z[k];   
+        }
+            avgZ= sumZ / buffer.z.length;
+        else
+        }
+      
+        
+>>>>>>> master
         // This function handles the Moving Average Filter
 
         // Input:
