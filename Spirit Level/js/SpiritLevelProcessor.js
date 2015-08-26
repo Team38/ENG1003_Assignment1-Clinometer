@@ -136,15 +136,20 @@ function SpiritLevelProcessor() {
         //      each of the axes respectively
         var retVal = document.getElementById("message-area");   
         
-        var adjLength,
-            angle
+        var finalAngle,
+            pitchAngle,
+            rollAngle;
         
-        //calculate the length adjacent to the angle. This, along with the z-axis input, will evaluate the eventual angle.
-        adjLength = Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
+        //This calculates the angle to which the phone is pitched. It describes the angle of the phone with respect to the y- and z-axis.
+        pitchAngle = (Math.atan(z/y)*180)/Math.PI;
         
         
-        //This calculates the angle between the two vectors in degrees using arctan
-        angle = Math.atan(z/adjLength);
+        //This calculates the angle to which the phone is rolled. It describes the angle of the phone with respoect to the x- and z-xias.
+        rollAngle = Math.atan(z/x);
+        
+        //finalAngle = 
+        
+        
         
         /*** Not too sure about what comes after this..
         return retVal.innerHTML = angle ??
