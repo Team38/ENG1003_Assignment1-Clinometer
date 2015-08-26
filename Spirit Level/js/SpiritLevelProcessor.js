@@ -41,10 +41,11 @@ freeze-button
 function SpiritLevelProcessor() {
     var self = this,
         rawMotionData,
+        outputAngle = document.getElementById("message-area")
         bufferRecord = {
             x: [],
             y: [],
-            z: []
+            z: [];
         };
 
     var uiController = null;
@@ -54,7 +55,10 @@ function SpiritLevelProcessor() {
 
         window.addEventListener("devicemotion", handleMotion);
         
-        displayAngle(filteredValues.x,filteredValues.y,filteredValues.z)
+        uiController.bubbleTranslate(filteredValues.x,filteredValues.y, dark-bubble);
+        
+        
+        
     }
 
     function handleMotion(event) {
@@ -68,7 +72,10 @@ function SpiritLevelProcessor() {
             gZ = aZ / 9.8;
 
         rawMotionData = [gX, gY, gZ];
+        
         movingAverage(bufferRecord, rawMotionData);
+        
+        return movingAverage;
     }
 
     function movingAverage(buffer, newValue) {
@@ -126,6 +133,8 @@ function SpiritLevelProcessor() {
             z: sumZ / buffer.z.length;
         };
 
+        displayAngle(filteredValues.x,filteredValues.y,filteredValues.z);
+        
         return filteredValues
     }
 
@@ -151,7 +160,8 @@ function SpiritLevelProcessor() {
         
         //finalAngle = 
         
-        
+        /**---------------------------------------------------      
+        So we are only expected to have only one outputAngle. I have a feeling it ain't pitch nor is it roll. Says in the instructions that it is the angle between Fg and Fz, where Fg is the gravitation force vector that is always perpendicular to the phone, and Fz is the force in the z-axis -----------------------------------------**/
         
         /*** Not too sure about what comes after this..
         return retVal.innerHTML = angle ??
