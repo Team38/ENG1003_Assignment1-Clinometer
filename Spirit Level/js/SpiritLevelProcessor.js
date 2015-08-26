@@ -53,6 +53,8 @@ function SpiritLevelProcessor() {
         uiController = controller;
 
         window.addEventListener("devicemotion", handleMotion);
+        
+        displayAngle(filteredValues.x,filteredValues.y,filteredValues.z)
     }
 
     function handleMotion(event) {
@@ -121,7 +123,7 @@ function SpiritLevelProcessor() {
         filteredValues = {
             x: sumX / buffer.x.length,
             y: sumY / buffer.y.length,
-            z: sumZ / buffer.z.length,
+            z: sumZ / buffer.z.length;
         };
 
         return filteredValues
@@ -141,11 +143,11 @@ function SpiritLevelProcessor() {
             rollAngle;
         
         //This calculates the angle to which the phone is pitched. It describes the angle of the phone with respect to the y- and z-axis.
-        pitchAngle = (Math.atan(z/y)*180)/Math.PI;
+        pitchAngle = (Math.atan(filteredValues.z/filteredValues.y)*180)/Math.PI;
         
         
         //This calculates the angle to which the phone is rolled. It describes the angle of the phone with respoect to the x- and z-xias.
-        rollAngle = Math.atan(z/x);
+        rollAngle = (Math.atan(x / Math.sqrt(Math.pow(filteredValues.y,2) + Math.pow(filteredValues.z,2))) * 180) / Math.PI;
         
         //finalAngle = 
         
