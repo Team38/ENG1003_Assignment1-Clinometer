@@ -53,12 +53,18 @@ function SpiritLevelProcessor() {
     self.initialise = function (controller) {
         uiController = controller;
 
+        //phone window. This code will run handleMotion when it detect device's motion.
         window.addEventListener("devicemotion", handleMotion);
         
-        uiController.bubbleTranslate(filteredValues.x,filteredValues.y, dark-bubble);
+       var getXYZ = {
+            x: filteredValues.x,
+            y: filteredValues.y,
+            z: filteredValues.z;
+    }
         
+        uiController.bubbleTranslate(getXYZ.x,getXYZ.y, dark-bubble);
         
-        
+        displayAngle(getXYZ.x,getXYZ.y,getXYZ.z);
     }
 
     function handleMotion(event) {
@@ -158,23 +164,24 @@ function SpiritLevelProcessor() {
         //This calculates the angle to which the phone is rolled. It describes the angle of the phone with respoect to the x- and z-xias.
         rollAngle = (Math.atan(x / Math.sqrt(Math.pow(filteredValues.y,2) + Math.pow(filteredValues.z,2))) * 180) / Math.PI;
         
-        //finalAngle = 
         
-        /**---------------------------------------------------      
-        So we are only expected to have only one outputAngle. I have a feeling it ain't pitch nor is it roll. Says in the instructions that it is the angle between Fg and Fz, where Fg is the gravitation force vector that is always perpendicular to the phone, and Fz is the force in the z-axis -----------------------------------------**/
+        //The final angle is calculated to be the "Pythagoras" of the pitch and roll angles.
+        finalAngle = Math.sqrt(Math.pow(pitchAngle,2) + Math.pow(rollAngle,2));
         
-        /*** Not too sure about what comes after this..
-        return retVal.innerHTML = angle ??
-        ***/
+        retVal.innerHTML = finalAngle;
+        
     }
 
     self.freezeClick = function () {
-        // ADVANCED FUNCTIONALITY
-        // ================================================================
-        // This function will trigger when the "Freeze" button is pressed
-        // The ID of the button is "freeze-button"
+        
+      var getXYZ = {
+            x: filteredValues.x,
+            y: filteredValues.y,
+            z: filteredValues.z;
     }
 
+      uiController.bubbleTranslate(getXYZ.x,getXYZ.y, pale-bubble);
+      
     function movingMedian(buffer, newValue) {
         // ADVANCED FUNCTIONALITY
         // =================================================================
