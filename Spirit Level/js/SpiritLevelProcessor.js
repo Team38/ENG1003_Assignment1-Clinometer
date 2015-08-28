@@ -150,14 +150,32 @@ function SpiritLevelProcessor() {
     }
 
     self.freezeClick = function () {
-
-        var getXYZ = {
-            x: filteredValues.x,
-            y: filteredValues.y,
-            z: filteredValues.z
+        
+        var numClick = 1;
+        
+        handleMotion;
+        
+        return function() {
+            var getXY = {
+                x: handleMotion.x,
+                y: handleMotion.y;
+            }
+            
+            if (numClick % 2 !== 0) {
+                uiController.bubbleTranslate(getXY.x,getXY.y,pale-green)
+                
+                numClick++;
+            }
+            else if (numClick % 2 ===0) {
+                uiController.bubbleTranslate(0,0,pale-green)
+            
+                numClick++;
+            }
+            else{}
+            
+            return numClick;
         }
-
-        uiController.bubbleTranslate(getXYZ.x, getXYZ.y, pale - bubble);
+    }
 
         function movingMedian(buffer, newValue) {
             // ADVANCED FUNCTIONALITY
