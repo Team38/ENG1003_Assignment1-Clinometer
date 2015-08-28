@@ -42,11 +42,11 @@ function SpiritLevelProcessor() {
     var self = this,
         rawMotionData,
         outputAngle = document.getElementById("message-area")
-        bufferRecord = {
-            x: [],
-            y: [],
-            z: [];
-        };
+    bufferRecord = {
+        x: [],
+        y: [],
+        z: []
+    };
 
     var uiController = null;
 
@@ -55,16 +55,7 @@ function SpiritLevelProcessor() {
 
         //phone window. This code will run handleMotion when it detect device's motion.
         window.addEventListener("devicemotion", handleMotion);
-        
-       var getXYZ = {
-            x: filteredValues.x,
-            y: filteredValues.y,
-            z: filteredValues.z;
-    }
-        
-        uiController.bubbleTranslate(getXYZ.x,getXYZ.y, dark-bubble);
-        
-        displayAngle(getXYZ.x,getXYZ.y,getXYZ.z);
+
     }
 
     function handleMotion(event) {
@@ -78,9 +69,9 @@ function SpiritLevelProcessor() {
             gZ = aZ / 9.8;
 
         rawMotionData = [gX, gY, gZ];
-        
+
         movingAverage(bufferRecord, rawMotionData);
-        
+
         return movingAverage;
     }
 
@@ -109,15 +100,15 @@ function SpiritLevelProcessor() {
         buffer.y[buffer.y.length] = newY;
         buffer.z[buffer.z.length] = newZ;
 
-        if (buffer.x.length > 100) {
+        if (buffer.x.length > 25) {
             buffer.x.shift()
         }
 
-        if (buffer.y.length > 100) {
+        if (buffer.y.length > 25) {
             buffer.y.shift()
         }
 
-        if (buffer.z.length > 100) {
+        if (buffer.z.length > 25) {
             buffer.z.shift()
         }
 
@@ -136,11 +127,11 @@ function SpiritLevelProcessor() {
         filteredValues = {
             x: sumX / buffer.x.length,
             y: sumY / buffer.y.length,
-            z: sumZ / buffer.z.length;
+            z: sumZ / buffer.z.length
         };
 
-        displayAngle(filteredValues.x,filteredValues.y,filteredValues.z);
-        
+        displayAngle(filteredValues.x, filteredValues.y, filteredValues.z);
+
         return filteredValues
     }
 
@@ -151,62 +142,36 @@ function SpiritLevelProcessor() {
         // Input: x,y,z
         //      These values should be the filtered values after the Moving Average for
         //      each of the axes respectively
-        var retVal = document.getElementById("message-area");   
-        
-        var finalAngle,
-            pitchAngle,
-            rollAngle;
-        
-        //This calculates the angle to which the phone is pitched. It describes the angle of the phone with respect to the y- and z-axis.
-        pitchAngle = (Math.atan(-(filteredValues.y)/filteredValues.z)*180)/Math.PI;
-        
-        
-        //This calculates the angle to which the phone is rolled. It describes the angle of the phone with respoect to the x- and z-xias.
-        rollAngle = (Math.atan(x / Math.sqrt(Math.pow(filteredValues.y,2) + Math.pow(filteredValues.z,2))) * 180) / Math.PI;
-        
-        
-        //The final angle is calculated to be the "Pythagoras" of the pitch and roll angles.
-        finalAngle = Math.sqrt(Math.pow(pitchAngle,2) + Math.pow(rollAngle,2));
-        
+        var retVal = document.getElementById("message-area"),
+            finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
+
         retVal.innerHTML = finalAngle;
-        
+
     }
 
     self.freezeClick = function () {
-      var numClick = 1; /**numClick records the number of times you have used freeze, 
-                        so that when the number is an odd number, it will operate as it is.
-                        But if it is an even number, it will translate the bubble back into origin spot**/ 
-        
-        return function(){
-            var getXY = {
-                x: filteredValues.x,
-                y: filteredValues.y;
-                numClick++;
-            }
-            if (numClick %2 !== 0){
-                uiController.bubbleTranslate(getXYZ.x,getXYZ.y, pale-bubble);
-            }
-            else if (numClick %2 === 0){
-                uiController.bubbleTranslate(0,0,pale-bubble);
-                numClick++;
-            }
-            else{}
-            
-            return numClick;
+
+        var getXYZ = {
+            x: filteredValues.x,
+            y: filteredValues.y,
+            z: filteredValues.z
         }
-    }
-    function movingMedian(buffer, newValue) {
-        // ADVANCED FUNCTIONALITY
-        // =================================================================
-        // This function handles the Moving Median Filter
-        // Input:
-        //      buffer
-        //      The buffer in which the function will apply the moving to.
 
-        //      newValue
-        //      This should be the newest value that will be pushed into the buffer
+        uiController.bubbleTranslate(getXYZ.x, getXYZ.y, pale - bubble);
 
-        // Output: filteredValue
-        //      This function should return the result of the moving average filter
+        function movingMedian(buffer, newValue) {
+            // ADVANCED FUNCTIONALITY
+            // =================================================================
+            // This function handles the Moving Median Filter
+            // Input:
+            //      buffer
+            //      The buffer in which the function will apply the moving to.
+
+            //      newValue
+            //      This should be the newest value that will be pushed into the buffer
+
+            // Output: filteredValue
+            //      This function should return the result of the moving average filter
+        }
     }
 }
