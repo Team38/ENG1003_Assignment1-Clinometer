@@ -42,11 +42,19 @@ function SpiritLevelProcessor() {
     var self = this,
         rawMotionData,
         outputAngle = document.getElementById("message-area")
+<<<<<<< HEAD
     bufferRecord = {
         x: [],
         y: [],
         z: []
     };
+=======
+        bufferRecord = {
+            x: [],
+            y: [],
+            z: [];
+        };
+>>>>>>> master
 
     var uiController = null;
 
@@ -55,7 +63,20 @@ function SpiritLevelProcessor() {
 
         //phone window. This code will run handleMotion when it detect device's motion.
         window.addEventListener("devicemotion", handleMotion);
+<<<<<<< HEAD
 
+=======
+        
+       var getXYZ = {
+            x: filteredValues.x,
+            y: filteredValues.y,
+            z: filteredValues.z;
+    }
+        
+        uiController.bubbleTranslate(getXYZ.x,getXYZ.y, dark-bubble);
+        
+        displayAngle(getXYZ.x,getXYZ.y,getXYZ.z);
+>>>>>>> master
     }
 
     function handleMotion(event) {
@@ -69,9 +90,15 @@ function SpiritLevelProcessor() {
             gZ = aZ / 9.8;
 
         rawMotionData = [gX, gY, gZ];
+<<<<<<< HEAD
 
         movingAverage(bufferRecord, rawMotionData);
 
+=======
+        
+        movingAverage(bufferRecord, rawMotionData);
+        
+>>>>>>> master
         return movingAverage;
     }
 
@@ -127,11 +154,19 @@ function SpiritLevelProcessor() {
         filteredValues = {
             x: sumX / buffer.x.length,
             y: sumY / buffer.y.length,
+<<<<<<< HEAD
             z: sumZ / buffer.z.length
         };
 
         displayAngle(filteredValues.x, filteredValues.y, filteredValues.z);
 
+=======
+            z: sumZ / buffer.z.length;
+        };
+
+        displayAngle(filteredValues.x,filteredValues.y,filteredValues.z);
+        
+>>>>>>> master
         return filteredValues
     }
 
@@ -142,6 +177,7 @@ function SpiritLevelProcessor() {
         // Input: x,y,z
         //      These values should be the filtered values after the Moving Average for
         //      each of the axes respectively
+<<<<<<< HEAD
         var retVal = document.getElementById("message-area"),
             finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
 
@@ -156,6 +192,46 @@ function SpiritLevelProcessor() {
             y: filteredValues.y,
             z: filteredValues.z
         }
+=======
+        var retVal = document.getElementById("message-area");   
+        
+        var finalAngle,
+            pitchAngle,
+            rollAngle;
+        
+        //This calculates the angle to which the phone is pitched. It describes the angle of the phone with respect to the y- and z-axis.
+        pitchAngle = (Math.atan(filteredValues.z/filteredValues.y)*180)/Math.PI;
+        
+        
+        //This calculates the angle to which the phone is rolled. It describes the angle of the phone with respoect to the x- and z-xias.
+        rollAngle = (Math.atan(x / Math.sqrt(Math.pow(filteredValues.y,2) + Math.pow(filteredValues.z,2))) * 180) / Math.PI;
+        
+        
+        //The final angle is calculated to be the "Pythagoras" of the pitch and roll angles.
+        finalAngle = Math.sqrt(Math.pow(pitchAngle,2) + Math.pow(rollAngle,2));
+        
+        retVal.innerHTML = finalAngle;
+        
+    }
+
+    self.freezeClick = function () {
+        
+      var getXYZ = {
+            x: filteredValues.x,
+            y: filteredValues.y,
+            z: filteredValues.z;
+    }
+
+      uiController.bubbleTranslate(getXYZ.x,getXYZ.y, pale-bubble);
+      
+    function movingMedian(buffer, newValue) {
+        // ADVANCED FUNCTIONALITY
+        // =================================================================
+        // This function handles the Moving Median Filter
+        // Input:
+        //      buffer
+        //      The buffer in which the function will apply the moving to.
+>>>>>>> master
 
         uiController.bubbleTranslate(getXYZ.x, getXYZ.y, pale - bubble);
 
