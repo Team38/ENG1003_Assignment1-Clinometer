@@ -190,14 +190,11 @@ function SpiritLevelProcessor() {
                 uiController.bubbleTranslate(0,0,pale-bubble);
                 numClick++;
             }
-            else
+            else{}
             
             return numClick;
-        
+        }
     }
-
-      uiController.bubbleTranslate(getXYZ.x,getXYZ.y, pale-bubble);
-      
     function movingMedian(buffer, newValue) {
         // ADVANCED FUNCTIONALITY
         // =================================================================
