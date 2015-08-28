@@ -158,7 +158,7 @@ function SpiritLevelProcessor() {
             rollAngle;
         
         //This calculates the angle to which the phone is pitched. It describes the angle of the phone with respect to the y- and z-axis.
-        pitchAngle = (Math.atan(filteredValues.z/filteredValues.y)*180)/Math.PI;
+        pitchAngle = (Math.atan(-(filteredValues.y)/filteredValues.z)*180)/Math.PI;
         
         
         //This calculates the angle to which the phone is rolled. It describes the angle of the phone with respoect to the x- and z-xias.
