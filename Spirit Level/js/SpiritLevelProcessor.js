@@ -150,8 +150,8 @@ function SpiritLevelProcessor() {
         return function() {
             var getXY = {
                 x: handleMotion.x,
-                y: handleMotion.y;
-            }
+                y: handleMotion.y
+            };
             
             if (numClick % 2 !== 0) {
                 uiController.bubbleTranslate(getXY.x,getXY.y,pale-green)
