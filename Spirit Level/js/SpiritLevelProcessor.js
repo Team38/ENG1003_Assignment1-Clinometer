@@ -4,36 +4,28 @@ Avaiable functions for usage in the uiController object
 uiController.bubbleTranslate(x,y, id)
     This function will translate the bubble from the middle of the screen.
     The center of the screen is considered (0,0).
-
     Inputs:
         x,y
         Translates the bubble x px right and y px up. Negative values are accepted
         and translate the bubble in the opposite direction.
-
         id
         ID of bubble that needs to be moved
-
 uiController.bodyDimensions()
     Returns the width and height of the body (without the toolbar)
-
     Return:
         Returns an object with the following fields
         {
             width:      [Returns the width of the body],
             height:     [Returns the width of the body]
         }
-
 ID of HTML elements that are of interest
 ==============================================================
 dark-bubble
     ID of the dark green bubble
-
 pale-bubble
     ID of the pale green bubble
-
 message-area
     ID of text area at the bottom of the screen, just on top on the "Feeze" button
-
 freeze-button
     ID of the "Freeze" button
 ****************************************************************************************/
@@ -41,13 +33,13 @@ freeze-button
 function SpiritLevelProcessor() {
     var self = this,
         rawMotionData,
-        outputAngle = document.getElementById("message-area")
-    bufferRecord = {
+        outputAngle = document.getElementById("message-area"),
+        bufferRecord = {
         x: [],
         y: [],
         z: []
     };
-
+   
     var uiController = null;
 
     self.initialise = function (controller) {
@@ -55,14 +47,14 @@ function SpiritLevelProcessor() {
 
         //phone window. This code will run handleMotion when it detect device's motion.
         window.addEventListener("devicemotion", handleMotion);
-
+       
     }
 
     function handleMotion(event) {
         // This function handles the new incoming values from the accelerometer
         var aX = event.accelerationIncludingGravity.x,
             aY = event.accelerationIncludingGravity.y,
-            aZ = event.accelerationIncludingGravity.z;
+            aZ = event.accelerationIncludingGravity.z
 
         var gX = aX / 9.8,
             gY = aY / 9.8,
@@ -71,7 +63,7 @@ function SpiritLevelProcessor() {
         rawMotionData = [gX, gY, gZ];
 
         movingAverage(bufferRecord, rawMotionData);
-
+        
         return movingAverage;
     }
 
@@ -145,11 +137,11 @@ function SpiritLevelProcessor() {
         var retVal = document.getElementById("message-area"),
             finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
 
-        retVal.innerHTML = finalAngle;
+        retVal.innerHTML = finalAngle.toFixed(2) + "&deg";
 
     }
 
-    self.freezeClick = function () {
+   self.freezeClick = function () {
         
         var numClick = 1;
         
@@ -176,7 +168,8 @@ function SpiritLevelProcessor() {
             return numClick;
         }
     }
-
+      uiController.bubbleTranslate(getXYZ.x,getXYZ.y, pale-bubble);
+      
         function movingMedian(buffer, newValue) {
             // ADVANCED FUNCTIONALITY
             // =================================================================
