@@ -173,11 +173,27 @@ function SpiritLevelProcessor() {
     }
 
     self.freezeClick = function () {
+      var numClick = 1; /**numClick records the number of times you have used freeze, 
+                        so that when the number is an odd number, it will operate as it is.
+                        But if it is an even number, it will translate the bubble back into origin spot**/ 
         
-      var getXYZ = {
-            x: filteredValues.x,
-            y: filteredValues.y,
-            z: filteredValues.z;
+        return function(){
+            var getXY = {
+                x: filteredValues.x,
+                y: filteredValues.y;
+                numClick++;
+            }
+            if (numClick %2 !== 0){
+                uiController.bubbleTranslate(getXYZ.x,getXYZ.y, pale-bubble);
+            }
+            else if (numClick %2 === 0){
+                uiController.bubbleTranslate(0,0,pale-bubble);
+                numClick++;
+            }
+            else
+            
+            return numClick;
+        
     }
 
       uiController.bubbleTranslate(getXYZ.x,getXYZ.y, pale-bubble);
