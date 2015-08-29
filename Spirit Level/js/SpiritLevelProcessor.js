@@ -25,7 +25,7 @@ dark-bubble
 pale-bubble
     ID of the pale green bubble
 message-area
-    ID of text area at the bottom of the screen, just on top on the "Feeze" button
+    ID of text area at the bottom of the screen, just on top on the "Freeze" button
 freeze-button
     ID of the "Freeze" button
 ****************************************************************************************/
@@ -47,8 +47,11 @@ function SpiritLevelProcessor() {
 
         //phone window. This code will run handleMotion when it detect device's motion.
         window.addEventListener("devicemotion", handleMotion);
+
+        
        
     }
+
 
     function handleMotion(event) {
         // This function handles the new incoming values from the accelerometer
@@ -60,7 +63,7 @@ function SpiritLevelProcessor() {
             gY = aY / 9.8,
             gZ = aZ / 9.8;
 
-        rawMotionData = [gX, gY, gZ];
+        var rawMotionData = [gX, gY, gZ];
 
         movingAverage(bufferRecord, rawMotionData);
         
@@ -86,7 +89,8 @@ function SpiritLevelProcessor() {
             sumZ = 0,
             newX = newValue[0],
             newY = newValue[1],
-            newZ = newValue[2];
+            newZ = newValue[2],
+            dimensions = uiController.bodyDimensions();
 
         buffer.x[buffer.x.length] = newX;
         buffer.y[buffer.y.length] = newY;
@@ -121,10 +125,18 @@ function SpiritLevelProcessor() {
             y: sumY / buffer.y.length,
             z: sumZ / buffer.z.length
         };
-
+        
+        var transValue = {
+            x: Number(filteredValues.x) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
+            y: Number(filteredValues.y) * (dimensions.height/2),
+        };
+     
+		uiController.bubbleTranslate(transValue.x,transValue.y,"dark-bubble");
+        uiController.bubbleTranslate(transValue.x,transValue.y,"pale-bubble");
+		
         displayAngle(filteredValues.x, filteredValues.y, filteredValues.z);
 
-        return filteredValues
+        return filteredValues;
     }
 
     function displayAngle(x, y, z) {
@@ -167,9 +179,8 @@ function SpiritLevelProcessor() {
             
             return numClick;
         }
-    }
-      uiController.bubbleTranslate(getXYZ.x,getXYZ.y, pale-bubble);
-      
+    }  
+
         function movingMedian(buffer, newValue) {
             // ADVANCED FUNCTIONALITY
             // =================================================================
@@ -184,5 +195,4 @@ function SpiritLevelProcessor() {
             // Output: filteredValue
             //      This function should return the result of the moving average filter
         }
-    }
 }
