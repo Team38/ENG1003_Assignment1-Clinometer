@@ -33,12 +33,15 @@ freeze-button
 function SpiritLevelProcessor() {
     var self = this,
         rawMotionData,
+        retVal,
         outputAngle = document.getElementById("message-area"),
+        numClick = 0,
         bufferRecord = {
         x: [],
         y: [],
         z: []
     };
+        
    
     var uiController = null;
 
@@ -46,12 +49,9 @@ function SpiritLevelProcessor() {
         uiController = controller;
 
         //phone window. This code will run handleMotion when it detect device's motion.
-        window.addEventListener("devicemotion", handleMotion);
-
-        
+        (window.addEventListener("devicemotion", handleMotion)); 
        
     }
-
 
     function handleMotion(event) {
         // This function handles the new incoming values from the accelerometer
@@ -65,9 +65,8 @@ function SpiritLevelProcessor() {
 
         var rawMotionData = [gX, gY, gZ];
 
-        movingAverage(bufferRecord, rawMotionData);
-        
-        return movingAverage;
+        retVal = (movingAverage(bufferRecord, rawMotionData));
+
     }
 
     function movingAverage(buffer, newValue) {
@@ -126,17 +125,26 @@ function SpiritLevelProcessor() {
             z: sumZ / buffer.z.length
         };
         
-        var transValue = {
+        var transValues = {
             x: Number(filteredValues.x) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
             y: Number(filteredValues.y) * (dimensions.height/2),
         };
      
-		uiController.bubbleTranslate(transValue.x,transValue.y,"dark-bubble");
-        uiController.bubbleTranslate(transValue.x,transValue.y,"pale-bubble");
-		
+		uiController.bubbleTranslate(transValues.x,transValues.y,"dark-bubble");
+        
+        if (numClick % 2 === 0) {
+        
+            uiController.bubbleTranslate(transValues.x,transValues.y,"pale-bubble");
+        
+        }
+        
+        else {
+        
+        }
+        
         displayAngle(filteredValues.x, filteredValues.y, filteredValues.z);
 
-        return filteredValues;
+        return transValues;
     }
 
     function displayAngle(x, y, z) {
@@ -154,33 +162,19 @@ function SpiritLevelProcessor() {
     }
 
    self.freezeClick = function () {
-        
-        var numClick = 1;
-        
-        handleMotion;
-        
-        return function() {
-            var getXY = {
-                x: handleMotion.x,
-                y: handleMotion.y
-            };
-            
+       
+        numClick++;
+       
             if (numClick % 2 !== 0) {
-                uiController.bubbleTranslate(getXY.x,getXY.y,pale-green)
-                
-                numClick++;
+                uiController.bubbleTranslate(retVal.x,retVal.y,"pale-bubble");
             }
-            else if (numClick % 2 ===0) {
-                uiController.bubbleTranslate(0,0,pale-green)
             
-                numClick++;
+            else {
+            
             }
-            else{}
-            
-            return numClick;
-        }
-    }  
-
+       
+        }  
+   
         function movingMedian(buffer, newValue) {
             // ADVANCED FUNCTIONALITY
             // =================================================================
