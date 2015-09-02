@@ -257,14 +257,14 @@ function SpiritLevelProcessor() {
                 
             }
             
-			for (n = 0, n < 100, n++){
+			for (n = 0; n < 100; n++){
 				smootherX[n] = Math.abs((medianNow.x - filteredValues.x / 100) * (n+1))
 			}
-			for (n = 0, n < 100, n++){
+			for (n = 0; n < 100; n++){
 				smootherY[n] = Math.abs((medianNow.y - filteredValues.y / 100) * (n+1))
 			}
 			
-			for (n = 0, n < 100, n++){
+			for (n = 0; n < 100; n++){
 			
         var transValues = {
             x: Number(filteredValues.x + smootherX[n]) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
