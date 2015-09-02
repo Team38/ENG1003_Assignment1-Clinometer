@@ -40,7 +40,12 @@ function SpiritLevelProcessor() {
         x: [],
         y: [],
         z: []
-    };
+    },
+		filteredValues = {
+			x: 0,
+			y: 0,
+			z: 0
+		};
     
    
     var uiController = null;
@@ -203,13 +208,18 @@ function SpiritLevelProcessor() {
                 z: []
             },
                mid = 0,
-               medianX = 0,
-               medianY = 0,
-               medianZ = 0;
+               medianNow = {
+				   x: 0,
+				   y: 0,
+				   z: 0
+			   },
+			   smootherX = [],
+			   smootherY = [],
+			   smootherZ = [];
 			dimensions = uiController.bodyDimensions();
                
                 //x block
-            if (buffer.x.length > 25) {
+            if (buffer.x.length > 30) {
                 buffer.x.shift();
             }
                 buffer.x[buffer.x.length] = newX;
@@ -217,7 +227,7 @@ function SpiritLevelProcessor() {
                 bufferSort.x.sort(function(a, b){return a - b});
             
                 //y block
-            if (buffer.y.length > 25) {
+            if (buffer.y.length > 30) {
                 buffer.y.shift();
             }
                 buffer.y[buffer.y.length] = newY;
@@ -225,7 +235,7 @@ function SpiritLevelProcessor() {
                 bufferSort.y.sort(function(a, b){return a - b});
                 
                 //z block
-            if (buffer.z.length > 25) {
+            if (buffer.z.length > 30) {
                 buffer.z.shift();
             }
                 buffer.z[buffer.z.length] = newZ;
@@ -235,27 +245,30 @@ function SpiritLevelProcessor() {
                 mid = Math.floor(buffer.x.length/2);
             
             if (mid % 2) {
-                medianX = (bufferSort.x[mid]) 
-                medianY = (bufferSort.y[mid]) 
-                medianZ = (bufferSort.z[mid]) 
+                medianNow.x = (bufferSort.x[mid]) 
+                medianNow.y = (bufferSort.y[mid]) 
+                medianNow.z = (bufferSort.z[mid]) 
                             
             }
             else {
-                medianX = ((bufferSort.x[mid - 1] + bufferSort.x[mid])/2);
-                medianY = ((bufferSort.y[mid - 1] + bufferSort.y[mid])/2);
-                medianZ = ((bufferSort.z[mid - 1] + bufferSort.z[mid])/2);
+                medianNow.x = ((bufferSort.x[mid - 1] + bufferSort.x[mid])/2);
+                medianNow.y = ((bufferSort.y[mid - 1] + bufferSort.y[mid])/2);
+                medianNow.z = ((bufferSort.z[mid - 1] + bufferSort.z[mid])/2);
                 
             }
             
-            var filteredValues = {
-            x: medianX,
-            y: medianY,
-            z: medianZ
-        };
-
+			for (n = 0, n < 100, n++){
+				smootherX[n] = Math.abs((medianNow.x - filteredValues.x / 100) * (n+1))
+			}
+			for (n = 0, n < 100, n++){
+				smootherY[n] = Math.abs((medianNow.y - filteredValues.y / 100) * (n+1))
+			}
+			
+			for (n = 0, n < 100, n++){
+			
         var transValues = {
-            x: Number(filteredValues.x) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
-            y: Number(filteredValues.y) * (dimensions.height/2),
+            x: Number(filteredValues.x + smootherX[n]) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
+            y: Number(filteredValues.y + smootherY[n]) * (dimensions.height/2),
         };
      
 		uiController.bubbleTranslate(transValues.x,transValues.y,"dark-bubble");
@@ -270,6 +283,13 @@ function SpiritLevelProcessor() {
         else {
         
         }
+			}
+			
+		filteredValues = {
+            x: medianNow.x,
+            y: medianNow.y,
+            z: medianNow.z
+        };
         
         displayAngle(filteredValues.x, filteredValues.y, filteredValues.z); //calls the function displayAngle and give it the 3 inputs based on the calculated averages.
 
