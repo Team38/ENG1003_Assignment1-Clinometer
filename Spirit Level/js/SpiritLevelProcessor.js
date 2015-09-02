@@ -206,6 +206,7 @@ function SpiritLevelProcessor() {
                medianX = 0,
                medianY = 0,
                medianZ = 0;
+			dimensions = uiController.bodyDimensions();
                
                 //x block
             if (buffer.x.length > 25) {
