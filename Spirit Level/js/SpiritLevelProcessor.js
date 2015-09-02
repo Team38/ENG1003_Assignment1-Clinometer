@@ -70,7 +70,7 @@ function SpiritLevelProcessor() {
 
         rawMotionData = [gX, gY, gZ];
 
-        movingAverage(bufferRecord, rawMotionData);
+        movingMedian(bufferRecord, rawMotionData);
         
         return movingMedian;
     }
