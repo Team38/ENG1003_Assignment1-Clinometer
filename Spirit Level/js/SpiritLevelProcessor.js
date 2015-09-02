@@ -189,68 +189,69 @@ function SpiritLevelProcessor() {
 
             // Output: filteredValue
             //      This function should return the result of the moving average filter
-            var filteredValues = {
+           var newX = newValue[0],
+               newY = newValue[1],
+               newZ = newValue[2],
+               filteredValues = {
                 x: 0,
                 y: 0,
                 z: 0
             },
-            bufferSort = {
+                bufferSort = {
                 x: [],
                 y: [],
                 z: []
             },
-            newX = newValue[0],
-            newY = newValue[1],
-            newZ = newValue[2],
-            dimensions = uiController.bodyDimensions();
-                if (buffer.x.length < 25){
-                    buffer.x[buffer.x.length] = newX;
-                }
-                else if (buffer.x.length > 25) {
-                    buffer.x.shift();
-                    buffer.x[buffer.x.length] = newX;
-                    bufferSort.x = buffer.x.slice();
-                    filteredValues.x = medianMaker(bufferSort.x.sort(function(a, b){return a-b}));
-                }
-                else{}
+               mid = 0,
+               medianX = 0,
+               medianY = 0,
+               medianZ = 0;
+               
+                //x block
+            if (buffer.x.length > 25) {
+                buffer.x.shift();
+            }
+                buffer.x[buffer.x.length] = newX;
+                bufferSort.x = buffer.x.slice();
+                bufferSort.x.sort(function(a, b){return a - b});
+            
+                //y block
+            if (buffer.y.length > 25) {
+                buffer.y.shift();
+            }
+                buffer.y[buffer.y.length] = newY;
+                bufferSort.y = buffer.y.slice();
+                bufferSort.y.sort(function(a, b){return a - b});
                 
+                //z block
+            if (buffer.z.length > 25) {
+                buffer.z.shift();
+            }
+                buffer.z[buffer.z.length] = newZ;
+                bufferSort.z = buffer.z.slice();
+                bufferSort.z.sort(function(a, b){return a - b});
+            
+                mid = Math.floor(buffer.x.length/2);
+            
+            if (mid % 2) {
+                medianX = (bufferSort.x[mid]) 
+                medianY = (bufferSort.y[mid]) 
+                medianZ = (bufferSort.z[mid]) 
+                            
+            }
+            else {
+                medianX = ((bufferSort.x[mid - 1] + bufferSort.x[mid])/2);
+                medianY = ((bufferSort.y[mid - 1] + bufferSort.y[mid])/2);
+                medianZ = ((bufferSort.z[mid - 1] + bufferSort.z[mid])/2);
                 
-                if (buffer.y.length < 25){
-                    buffer.y[buffer.y.length] = newY;
-                }
-                else if (buffer.y.length > 25) {
-                    buffer.y.shift();
-                    buffer.y[buffer.y.length] = newX;
-                    bufferSort.y = buffer.y.slice();
-                    filteredValues.y = medianMaker(bufferSort.y.sort(function(a, b){return a-b}));
-                }
-                else{}
-                
-                
-                if (buffer.z.length < 25){
-                    buffer.z[buffer.z.length] = newZ;
-                }
-                else if (buffer.z.length > 25) {
-                    buffer.z.shift();
-                    buffer.z[buffer.z.length] = newX;
-                    bufferSort.z = buffer.z.slice();
-                    filteredValues.z = medianMaker(bufferSort.z.sort(function(a, b){return a-b}));
-                }
-                else{}
-                
-                    
-                function medianMaker (arrayValues) {
-                    
-                var mid = Math.floor(arrayValues.length/2);
-                
-                if (arrayValues % 2)
-                    median = arrayValues[mid]
-                else
-                    median = ((arrayValues[mid - 1] + arrayValues[mid]) / 2)
-                    
-                return median;
-                }
-                    
+            }
+            
+            var filteredValues = {
+            x: medianX,
+            y: medianY,
+            z: medianZ
+        };
+
         var transValues = {
             x: Number(filteredValues.x) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
             y: Number(filteredValues.y) * (dimensions.height/2),
