@@ -4,36 +4,28 @@ Avaiable functions for usage in the uiController object
 uiController.bubbleTranslate(x,y, id)
     This function will translate the bubble from the middle of the screen.
     The center of the screen is considered (0,0).
-
     Inputs:
         x,y
         Translates the bubble x px right and y px up. Negative values are accepted
         and translate the bubble in the opposite direction.
-
         id
         ID of bubble that needs to be moved
-
 uiController.bodyDimensions()
     Returns the width and height of the body (without the toolbar)
-
     Return:
         Returns an object with the following fields
         {
             width:      [Returns the width of the body],
             height:     [Returns the width of the body]
         }
-
 ID of HTML elements that are of interest
 ==============================================================
 dark-bubble
     ID of the dark green bubble
-
 pale-bubble
     ID of the pale green bubble
-
 message-area
-    ID of text area at the bottom of the screen, just on top on the "Feeze" button
-
+    ID of text area at the bottom of the screen, just on top on the "Freeze" button
 freeze-button
     ID of the "Freeze" button
 ****************************************************************************************/
@@ -41,12 +33,15 @@ freeze-button
 function SpiritLevelProcessor() {
     var self = this,
         rawMotionData,
+        retVal,
         outputAngle = document.getElementById("message-area"),
+        numClick = 0,
         bufferRecord = {
         x: [],
         y: [],
         z: []
     };
+    
    
     var uiController = null;
 
@@ -54,7 +49,7 @@ function SpiritLevelProcessor() {
         uiController = controller;
 
         //phone window. This code will run handleMotion when it detect device's motion.
-        window.addEventListener("devicemotion", handleMotion);
+        (window.addEventListener("devicemotion", handleMotion)); 
        
     }
 
@@ -68,14 +63,13 @@ function SpiritLevelProcessor() {
             gY = aY / 9.8,
             gZ = aZ / 9.8;
 
-        rawMotionData = [gX, gY, gZ];
+        var rawMotionData = [gX, gY, gZ];
 
-        movingAverage(bufferRecord, rawMotionData);
-        
-        return movingAverage;
+        retVal = (movingMedian(bufferRecord, rawMotionData)); //pulls return objects out of movingAverage and sets it as a local variable of the outer function
+
     }
 
-    function movingAverage(buffer, newValue) {
+    /**function movingAverage(buffer, newValue) {
         // This function handles the Moving Average Filter
 
         // Input:
@@ -94,7 +88,8 @@ function SpiritLevelProcessor() {
             sumZ = 0,
             newX = newValue[0],
             newY = newValue[1],
-            newZ = newValue[2];
+            newZ = newValue[2],
+            dimensions = uiController.bodyDimensions();
 
         buffer.x[buffer.x.length] = newX;
         buffer.y[buffer.y.length] = newY;
@@ -129,11 +124,29 @@ function SpiritLevelProcessor() {
             y: sumY / buffer.y.length,
             z: sumZ / buffer.z.length
         };
+        
+        var transValues = {
+            x: Number(filteredValues.x) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
+            y: Number(filteredValues.y) * (dimensions.height/2),
+        };
+     
+		uiController.bubbleTranslate(transValues.x,transValues.y,"dark-bubble");
+        
+        //This extra bit here serves the multi-functional freeze buttons
+        if (numClick % 2 === 0) {
+        
+            uiController.bubbleTranslate(transValues.x,transValues.y,"pale-bubble");
+        
+        }
+        
+        else {
+        
+        }
+        
+        displayAngle(filteredValues.x, filteredValues.y, filteredValues.z); //calls the function displayAngle and give it the 3 inputs based on the calculated averages.
 
-        displayAngle(filteredValues.x, filteredValues.y, filteredValues.z);
-
-        return filteredValues
-    }
+        return transValues;
+    }**/
 
     function displayAngle(x, y, z) {
         // This function will handle the calculation of the angle from the z-axis and
@@ -145,20 +158,24 @@ function SpiritLevelProcessor() {
         var retVal = document.getElementById("message-area"),
             finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
 
-        retVal.innerHTML = finalAngle.toFixed(2) + "&deg";
+        retVal.innerHTML = finalAngle.toFixed(2) + "&deg"; 
 
     }
 
-    self.freezeClick = function () {
-        
-      var getXYZ = {
-            x: filteredValues.x,
-            y: filteredValues.y,
-            z: filteredValues.z
-    }
-
-      uiController.bubbleTranslate(getXYZ.x,getXYZ.y, pale-bubble);
-      
+   self.freezeClick = function () {
+       
+        numClick++; //numClick allows this button to have multiple functions - one to freeze and one to unfreeze
+       
+            if (numClick % 2 !== 0) {
+                uiController.bubbleTranslate(retVal.x,retVal.y,"pale-bubble");
+            }
+            
+            else {
+            
+            }
+       
+        }  
+   
         function movingMedian(buffer, newValue) {
             // ADVANCED FUNCTIONALITY
             // =================================================================
@@ -172,6 +189,126 @@ function SpiritLevelProcessor() {
 
             // Output: filteredValue
             //      This function should return the result of the moving average filter
+            var filteredValues = {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+            bufferSort = {
+                x: [],
+                y: [],
+                z: []
+            },
+            newX = newValue[0],
+            newY = newValue[1],
+            newZ = newValue[2],
+            dimensions = uiController.bodyDimensions();
+                if (buffer.x.length < 25){
+                    buffer.x[buffer.x.length] = newX;
+                }
+                else if (buffer.x.length > 25) {
+                    buffer.x.shift();
+                    buffer.x[buffer.x.length] = newX;
+                    bufferSort.x = buffer.x.slice();
+                    filteredValues.x = medianMaker(bufferSort.x.sort(function(a, b){return a-b}));
+                }
+                else{}
+                
+                
+                if (buffer.y.length < 25){
+                    buffer.y[buffer.y.length] = newY;
+                }
+                else if (buffer.y.length > 25) {
+                    buffer.y.shift();
+                    buffer.y[buffer.y.length] = newX;
+                    bufferSort.y = buffer.y.slice();
+                    filteredValues.y = medianMaker(bufferSort.y.sort(function(a, b){return a-b}));
+                }
+                else{}
+                
+                
+                if (buffer.z.length < 25){
+                    buffer.z[buffer.z.length] = newZ;
+                }
+                else if (buffer.z.length > 25) {
+                    buffer.z.shift();
+                    buffer.z[buffer.z.length] = newX;
+                    bufferSort.z = buffer.z.slice();
+                    filteredValues.z = medianMaker(bufferSort.z.sort(function(a, b){return a-b}));
+                }
+                else{}
+                
+                    
+                function medianMaker (arrayValues) {
+                    
+                var mid = Math.floor(arrayValues.length/2);
+                
+                if (arrayValues % 2)
+                    median = arrayValues[mid]
+                else
+                    median = ((arrayValues[mid - 1] + arrayValues[mid]) / 2)
+                    
+                return median;
+                }
+                    
+        var transValues = {
+            x: Number(filteredValues.x) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
+            y: Number(filteredValues.y) * (dimensions.height/2),
+        };
+     
+		uiController.bubbleTranslate(transValues.x,transValues.y,"dark-bubble");
+        
+        //This extra bit here serves the multi-functional freeze buttons
+        if (numClick % 2 === 0) {
+        
+            uiController.bubbleTranslate(transValues.x,transValues.y,"pale-bubble");
+        
         }
+        
+        else {
+        
+        }
+        
+        displayAngle(filteredValues.x, filteredValues.y, filteredValues.z); //calls the function displayAngle and give it the 3 inputs based on the calculated averages.
+
+        return transValues;
     }
 }
+
+/*var fruits = [];
+var fruits2 = [];
+for (j = 1; j <=15; j++){
+	
+r = Math.floor(Math.random() * (20 - 1)) + 1;
+console.log(r);
+	
+	if (fruits.length === 10){
+		fruits.shift();
+		fruits[fruits.length] = r;
+		fruits2 = fruits.slice();
+		console.log(fruits);
+		fruits2.sort(function(a, b){return a-b});
+		console.log(fruits2);
+		
+	}
+	else{
+		fruits[fruits.length] = r;
+		fruits2 = fruits.slice();
+		console.log(fruits);
+		fruits2.sort(function(a, b){return a-b});
+		console.log(fruits2);
+
+	}
+	
+	var med = Math.floor(fruits2.length/2);
+	
+	if (fruits2.length % 2)
+		median = fruits2[med];
+	else
+		median = ((fruits2[med - 1] +  fruits2[med])/2)
+	console.log(median);
+	
+	console.log("")
+	
+
+}*/
