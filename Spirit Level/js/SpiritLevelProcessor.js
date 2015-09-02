@@ -72,7 +72,7 @@ function SpiritLevelProcessor() {
 
         movingAverage(bufferRecord, rawMotionData);
         
-        return movingAverage;
+        return movingMedian;
     }
 
     function movingAverage(buffer, newValue) {
@@ -129,7 +129,7 @@ function SpiritLevelProcessor() {
             y: sumY / buffer.y.length,
             z: sumZ / buffer.z.length
         };
-
+        
         displayAngle(filteredValues.x, filteredValues.y, filteredValues.z);
 
         return filteredValues
@@ -156,9 +156,11 @@ function SpiritLevelProcessor() {
             y: filteredValues.y,
             z: filteredValues.z
     }
-
+      
+      
       uiController.bubbleTranslate(getXYZ.x,getXYZ.y, pale-bubble);
       
+    }
         function movingMedian(buffer, newValue) {
             // ADVANCED FUNCTIONALITY
             // =================================================================
@@ -172,6 +174,86 @@ function SpiritLevelProcessor() {
 
             // Output: filteredValue
             //      This function should return the result of the moving average filter
+            
+           var newX = newValue[0],
+               newY = newValue[1],
+               newZ = newValue[2],
+               filteredValues = {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+                bufferSort = {
+                x: [],
+                y: [],
+                z: []
+            },
+               mid = 0,
+               medianX = 0,
+               medianY = 0,
+               medianZ = 0;
+               
+                //x block
+            if (buffer.x.length > 25) {
+                buffer.x.shift();
+            }
+                buffer.x[buffer.x.length] = newX;
+                bufferSort.x = buffer.x.slice();
+                bufferSort.x.sort(function(a, b){return a - b});
+            
+                //y block
+            if (buffer.y.length > 25) {
+                buffer.y.shift();
+            }
+                buffer.y[buffer.y.length] = newY;
+                bufferSort.y = buffer.y.slice();
+                bufferSort.y.sort(function(a, b){return a - b});
+                
+                //z block
+            if (buffer.z.length > 25) {
+                buffer.z.shift();
+            }
+                buffer.z[buffer.z.length] = newZ;
+                bufferSort.z = buffer.z.slice();
+                bufferSort.z.sort(function(a, b){return a - b});
+            
+                mid = Math.floor(buffer.x.length/2);
+            
+            if (mid % 2) {
+                medianX = (bufferSort.x[mid]) 
+                medianY = (bufferSort.y[mid]) 
+                medianZ = (bufferSort.z[mid]) 
+                            
+            }
+            else {
+                medianX = ((bufferSort.x[mid - 1] + bufferSort.x[mid])/2);
+                medianY = ((bufferSort.y[mid - 1] + bufferSort.y[mid])/2);
+                medianZ = ((bufferSort.z[mid - 1] + bufferSort.z[mid])/2);
+                
+            }
+            
+            filteredValues = {
+            x: medianX,
+            y: medianY,
+            z: medianZ
+        };
+            
+            displayAngle(filteredValues.x, filteredValues.y, filteredValues.z);
+
+        return filteredValues
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
         }
     }
-}
+
