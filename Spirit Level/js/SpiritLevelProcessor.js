@@ -79,7 +79,7 @@ function SpiritLevelProcessor() {
 
         transValues = {
             x: Number(filteredValuesStore.x) * (dimensions.width / 2 - 10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
-            y: Number(filteredValuesStore.y) * (dimensions.height / 2),
+            y: -Number(filteredValuesStore.y) * (dimensions.height / 2),
         };
 
         uiController.bubbleTranslate(transValues.x, transValues.y, "dark-bubble");
@@ -161,7 +161,7 @@ function SpiritLevelProcessor() {
         var returnStringRef = document.getElementById("message-area"),
             finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
 
-        returnStringRef.innerHTML = finalAngle.toFixed(0) + "&deg from the z-axis";
+        returnStringRef.innerHTML = finalAngle.toFixed(1) + "&deg from the z-axis";
 
     }
 
