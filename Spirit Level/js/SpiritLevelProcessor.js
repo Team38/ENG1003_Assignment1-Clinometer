@@ -158,10 +158,10 @@ function SpiritLevelProcessor() {
         // Input: x,y,z
         //      These values should be the filtered values after the Moving Average for
         //      each of the axes respectively
-        var retVal = document.getElementById("message-area"),
+        var returnStringRef = document.getElementById("message-area"),
             finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
 
-        retVal.innerHTML = finalAngle.toFixed(2) + "&deg from the z-axis";
+        returnStringRef.innerHTML = finalAngle.toFixed(0) + "&deg from the z-axis";
 
     }
 
@@ -187,26 +187,6 @@ function SpiritLevelProcessor() {
 
         // Output: filteredValue
         //      This function should return the result of the moving average filter
-    }
-
-    function translateBubble(filteredValues) {
-
-        var dimensions = uiController.bodyDimensions();
-
-        var transValues = {
-            x: Number(filteredValues.x) * (dimensions.width / 2 - 10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
-            y: Number(filteredValues.y) * (dimensions.height / 2),
-        };
-
-        uiController.bubbleTranslate(transValues.x, transValues.y, "dark-bubble");
-
-        if (numClick % 2 === 0) {
-
-            uiController.bubbleTranslate(transValues.x, transValues.y, "pale-bubble");
-        }
-
-        return transValues;
-
     }
 
     self.swap = function () {
