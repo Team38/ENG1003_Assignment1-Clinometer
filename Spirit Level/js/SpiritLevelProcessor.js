@@ -34,25 +34,26 @@ function SpiritLevelProcessor() {
     var self = this,
         rawMotionData,
         filteredValuesStore,
+        transValues,
         outputAngle = document.getElementById("message-area"),
         numClick = 0,
         swapClick = 0,
         bufferRecord = {
-        x: [],
-        y: [],
-        z: []
-    };
-        
-   
+            x: [],
+            y: [],
+            z: []
+        };
+
+
     var uiController = null;
 
     self.initialise = function (controller) {
         uiController = controller;
 
         //phone window. This code will run handleMotion when it detect device's motion.
-        (window.addEventListener("devicemotion", handleMotion)); 
+        (window.addEventListener("devicemotion", handleMotion));
         window.onload = swapButton;
-       
+
     }
 
     function handleMotion(event) {
@@ -66,29 +67,28 @@ function SpiritLevelProcessor() {
             gZ = aZ / 9.8;
 
         var rawMotionData = [gX, gY, gZ];
-        
-        
+
+
         if (swapClick % 2 === 0) {
-        filteredValuesStore = movingAverage(bufferRecord, rawMotionData);
-        }
-        else{
-        filteredValuesStore = movingMedian(bufferRecord, rawMotionData);
+            filteredValuesStore = movingAverage(bufferRecord, rawMotionData);
+        } else {
+            filteredValuesStore = movingMedian(bufferRecord, rawMotionData);
         }
 
         var dimensions = uiController.bodyDimensions();
-           
-            var transValues = {
-                x: Number(filteredValuesStore.x) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
-                y: Number(filteredValuesStore.y) * (dimensions.height/2),
-            };
-           
-                uiController.bubbleTranslate(transValues.x,transValues.y,"dark-bubble");
-        
-            if (numClick % 2 === 0) {
-        
-                uiController.bubbleTranslate(transValues.x,transValues.y,"pale-bubble");
-            }
-                
+
+        transValues = {
+            x: Number(filteredValuesStore.x) * (dimensions.width / 2 - 10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
+            y: Number(filteredValuesStore.y) * (dimensions.height / 2),
+        };
+
+        uiController.bubbleTranslate(transValues.x, transValues.y, "dark-bubble");
+
+        if (numClick % 2 === 0) {
+
+            uiController.bubbleTranslate(transValues.x, transValues.y, "pale-bubble");
+        }
+
     }
 
     function movingAverage(buffer, newValue) {
@@ -145,7 +145,7 @@ function SpiritLevelProcessor() {
             y: sumY / buffer.y.length,
             z: sumZ / buffer.z.length
         };
-        
+
         displayAngle(filteredValues.x, filteredValues.y, filteredValues.z);
 
         return filteredValues;
@@ -165,62 +165,62 @@ function SpiritLevelProcessor() {
 
     }
 
-   self.freezeClick = function () {
-       
+    self.freezeClick = function () {
+
         numClick++;
-       
-            if (numClick % 2 !== 0) {
-                uiController.bubbleTranslate(filteredValuesStore.x,filteredValuesStore.y,"pale-bubble");
-            }
-        }  
-   
-        function movingMedian(buffer, newValue) {
-            // ADVANCED FUNCTIONALITY
-            // =================================================================
-            // This function handles the Moving Median Filter
-            // Input:
-            //      buffer
-            //      The buffer in which the function will apply the moving to.
 
-            //      newValue
-            //      This should be the newest value that will be pushed into the buffer
+        if (numClick % 2 !== 0) {
+            uiController.bubbleTranslate(transValues.x, transValues.y, "pale-bubble");
+        }
+    }
 
-            // Output: filteredValue
-            //      This function should return the result of the moving average filter
+    function movingMedian(buffer, newValue) {
+        // ADVANCED FUNCTIONALITY
+        // =================================================================
+        // This function handles the Moving Median Filter
+        // Input:
+        //      buffer
+        //      The buffer in which the function will apply the moving to.
+
+        //      newValue
+        //      This should be the newest value that will be pushed into the buffer
+
+        // Output: filteredValue
+        //      This function should return the result of the moving average filter
+    }
+
+    function translateBubble(filteredValues) {
+
+        var dimensions = uiController.bodyDimensions();
+
+        var transValues = {
+            x: Number(filteredValues.x) * (dimensions.width / 2 - 10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
+            y: Number(filteredValues.y) * (dimensions.height / 2),
+        };
+
+        uiController.bubbleTranslate(transValues.x, transValues.y, "dark-bubble");
+
+        if (numClick % 2 === 0) {
+
+            uiController.bubbleTranslate(transValues.x, transValues.y, "pale-bubble");
         }
-        
-       function translateBubble(filteredValues) {
-           
-            var dimensions = uiController.bodyDimensions();
-           
-            var transValues = {
-                x: Number(filteredValues.x) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
-                y: Number(filteredValues.y) * (dimensions.height/2),
-            };
-           
-                uiController.bubbleTranslate(transValues.x,transValues.y,"dark-bubble");
-        
-            if (numClick % 2 === 0) {
-        
-                uiController.bubbleTranslate(transValues.x,transValues.y,"pale-bubble");
-            }
-                
-            return transValues;
-        
-        }
-    
-        self.swap = function () {
-            var swapButtonRef = document.getElementById("swapButton");
+
+        return transValues;
+
+    }
+
+    self.swap = function () {
+        var swapButtonRef = document.getElementById("swapButton");
         swapClick++;
-            if (swapClick % 2 === 0)
-                swapButtonRef.innerHTML = "Use Moving Median";
-            else
-                swapButtonRef.innerHTML = "Use Moving Average";
-        }
+        if (swapClick % 2 === 0)
+            swapButtonRef.innerHTML = "Use Moving Median";
+        else
+            swapButtonRef.innerHTML = "Use Moving Average";
+    }
 
-        function swapButton() {
-            var bottomDivNode = document.getElementById("bottom-div"),
-                tempNode = document.createElement("button");
+    function swapButton() {
+        var bottomDivNode = document.getElementById("bottom-div"),
+            tempNode = document.createElement("button");
         tempNode.setAttribute("id", "swapButton");
         tempNode.setAttribute("class", "ui-btn ui-corner-all");
         tempNode.setAttribute("onClick", "spiritLevelProcessor.swap()");
