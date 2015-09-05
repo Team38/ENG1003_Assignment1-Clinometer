@@ -34,7 +34,15 @@ function SpiritLevelProcessor() {
     var self = this,
         rawMotionData,
         filteredValuesStore,
-        transValues,
+        finalAngle = 0,
+        transValues = {
+            x: 0,
+            y: 0,
+        },
+        storedFrozenAngle = {
+            lowerBound: 0,
+            upperBound: 0,
+        },
         outputAngle = document.getElementById("message-area"),
         numClick = 0,
         swapClick = 0,
@@ -87,6 +95,8 @@ function SpiritLevelProcessor() {
         if (numClick % 2 === 0) {
 
             uiController.bubbleTranslate(transValues.x, transValues.y, "pale-bubble");
+            storedFrozenAngle.lowerBound = -0.1;
+            storedFrozenAngle.upperBound = 0.1;
         }
 
     }
@@ -158,10 +168,14 @@ function SpiritLevelProcessor() {
         // Input: x,y,z
         //      These values should be the filtered values after the Moving Average for
         //      each of the axes respectively
-        var returnStringRef = document.getElementById("message-area"),
-            finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
+        var returnStringRef = document.getElementById("message-area");
+        finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
 
-        returnStringRef.innerHTML = finalAngle.toFixed(1) + "&deg from the z-axis";
+        if (finalAngle >= storedFrozenAngle.lowerBound && finalAngle <= storedFrozenAngle.upperBound) {
+            returnStringRef.innerHTML = "ALIGNED" + "<br/>" + finalAngle.toFixed(1) + "&deg from the positive z-axis";
+        } else {
+            returnStringRef.innerHTML = finalAngle.toFixed(1) + "&deg from the positive z-axis";
+        }
 
     }
 
@@ -171,6 +185,8 @@ function SpiritLevelProcessor() {
 
         if (numClick % 2 !== 0) {
             uiController.bubbleTranslate(transValues.x, transValues.y, "pale-bubble");
+            storedFrozenAngle.lowerBound = finalAngle - 0.1;
+            storedFrozenAngle.upperBound = finalAngle + 0.1;
         }
     }
 
