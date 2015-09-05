@@ -33,15 +33,22 @@ freeze-button
 function SpiritLevelProcessor() {
     var self = this,
         rawMotionData,
+        accuracy = 0.5,
         filteredValuesStore,
         finalAngle = 0,
         transValues = {
             x: 0,
             y: 0,
         },
-        storedFrozenAngle = {
-            lowerBound: 0,
-            upperBound: 0,
+        storedTransValues = {
+            x: {
+                lowerBound: 0,
+                upperBound: 0,
+            },
+            y: {
+                lowerBound: 0,
+                upperBound: 0,
+            },
         },
         outputAngle = document.getElementById("message-area"),
         numClick = 0,
@@ -95,8 +102,10 @@ function SpiritLevelProcessor() {
         if (numClick % 2 === 0) {
 
             uiController.bubbleTranslate(transValues.x, transValues.y, "pale-bubble");
-            storedFrozenAngle.lowerBound = -0.1;
-            storedFrozenAngle.upperBound = 0.1;
+            storedTransValues.x.lowerBound = -accuracy;
+            storedTransValues.x.upperBound = accuracy;
+            storedTransValues.y.lowerBound = -accuracy;
+            storedTransValues.y.upperBound = accuracy;
         }
 
     }
@@ -171,7 +180,8 @@ function SpiritLevelProcessor() {
         var returnStringRef = document.getElementById("message-area");
         finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
 
-        if (finalAngle >= storedFrozenAngle.lowerBound && finalAngle <= storedFrozenAngle.upperBound) {
+        if (transValues.x >= storedTransValues.x.lowerBound && transValues.x <= storedTransValues.x.upperBound &&
+            transValues.y >= storedTransValues.y.lowerBound && transValues.y <= storedTransValues.y.upperBound) {
             returnStringRef.innerHTML = "ALIGNED" + "<br/>" + finalAngle.toFixed(1) + "&deg from the positive z-axis";
         } else {
             returnStringRef.innerHTML = finalAngle.toFixed(1) + "&deg from the positive z-axis";
@@ -185,8 +195,10 @@ function SpiritLevelProcessor() {
 
         if (numClick % 2 !== 0) {
             uiController.bubbleTranslate(transValues.x, transValues.y, "pale-bubble");
-            storedFrozenAngle.lowerBound = finalAngle - 0.1;
-            storedFrozenAngle.upperBound = finalAngle + 0.1;
+            storedTransValues.x.lowerBound = transValues.x - accuracy;
+            storedTransValues.x.upperBound = transValues.x + accuracy;
+            storedTransValues.y.lowerBound = transValues.y - accuracy;
+            storedTransValues.y.upperBound = transValues.y + accuracy;
         }
     }
 
