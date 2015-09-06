@@ -33,24 +33,42 @@ freeze-button
 function SpiritLevelProcessor() {
     var self = this,
         rawMotionData,
-        retVal,
+        accuracy = 0.5,
+        filteredValuesStore,
+        finalAngle = 0,
+        transValues = {
+            x: 0,
+            y: 0,
+        },
+        storedTransValues = {
+            x: {
+                lowerBound: 0,
+                upperBound: 0,
+            },
+            y: {
+                lowerBound: 0,
+                upperBound: 0,
+            },
+        },
         outputAngle = document.getElementById("message-area"),
         numClick = 0,
+        swapClick = 0,
         bufferRecord = {
-        x: [],
-        y: [],
-        z: []
-    };
-        
-   
+            x: [],
+            y: [],
+            z: []
+        };
+
+
     var uiController = null;
 
     self.initialise = function (controller) {
         uiController = controller;
 
         //phone window. This code will run handleMotion when it detect device's motion.
-        (window.addEventListener("devicemotion", handleMotion)); 
-       
+        (window.addEventListener("devicemotion", handleMotion));
+        window.onload = swapButton;
+
     }
 
     function handleMotion(event) {
@@ -65,7 +83,30 @@ function SpiritLevelProcessor() {
 
         var rawMotionData = [gX, gY, gZ];
 
-        retVal = (movingAverage(bufferRecord, rawMotionData));
+
+        if (swapClick % 2 === 0) {
+            filteredValuesStore = movingAverage(bufferRecord, rawMotionData);
+        } else {
+            filteredValuesStore = movingMedian(bufferRecord, rawMotionData);
+        }
+
+        var dimensions = uiController.bodyDimensions();
+
+        transValues = {
+            x: Number(filteredValuesStore.x) * (dimensions.width / 2 - 10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
+            y: -Number(filteredValuesStore.y) * (dimensions.height / 2),
+        };
+
+        uiController.bubbleTranslate(transValues.x, transValues.y, "dark-bubble");
+
+        if (numClick % 2 === 0) {
+
+            uiController.bubbleTranslate(transValues.x, transValues.y, "pale-bubble");
+            storedTransValues.x.lowerBound = -accuracy;
+            storedTransValues.x.upperBound = accuracy;
+            storedTransValues.y.lowerBound = -accuracy;
+            storedTransValues.y.upperBound = accuracy;
+        }
 
     }
 
@@ -88,8 +129,7 @@ function SpiritLevelProcessor() {
             sumZ = 0,
             newX = newValue[0],
             newY = newValue[1],
-            newZ = newValue[2],
-            dimensions = uiController.bodyDimensions();
+            newZ = newValue[2];
 
         buffer.x[buffer.x.length] = newX;
         buffer.y[buffer.y.length] = newY;
@@ -124,27 +164,10 @@ function SpiritLevelProcessor() {
             y: sumY / buffer.y.length,
             z: sumZ / buffer.z.length
         };
-        
-        var transValues = {
-            x: Number(filteredValues.x) * (dimensions.width/2 -10), //the 10px is to account for the size of the bubble (which is 20*20 px , then divide it by 2 so 10px CHECKED CSS FOR BUBBLE SIZE).
-            y: Number(filteredValues.y) * (dimensions.height/2),
-        };
-     
-		uiController.bubbleTranslate(transValues.x,transValues.y,"dark-bubble");
-        
-        if (numClick % 2 === 0) {
-        
-            uiController.bubbleTranslate(transValues.x,transValues.y,"pale-bubble");
-        
-        }
-        
-        else {
-        
-        }
-        
+
         displayAngle(filteredValues.x, filteredValues.y, filteredValues.z);
 
-        return transValues;
+        return filteredValues;
     }
 
     function displayAngle(x, y, z) {
@@ -154,28 +177,32 @@ function SpiritLevelProcessor() {
         // Input: x,y,z
         //      These values should be the filtered values after the Moving Average for
         //      each of the axes respectively
-        var retVal = document.getElementById("message-area"),
-            finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
+        var returnStringRef = document.getElementById("message-area");
+        finalAngle = Math.acos(z / (Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)))) * 180 / Math.PI;
 
-        retVal.innerHTML = finalAngle.toFixed(2) + "&deg";
+        if (transValues.x >= storedTransValues.x.lowerBound && transValues.x <= storedTransValues.x.upperBound &&
+            transValues.y >= storedTransValues.y.lowerBound && transValues.y <= storedTransValues.y.upperBound) {
+            returnStringRef.innerHTML = "ALIGNED" + "<br/>" + finalAngle.toFixed(1) + "&deg from the positive z-axis";
+        } else {
+            returnStringRef.innerHTML = finalAngle.toFixed(1) + "&deg from the positive z-axis";
+        }
 
     }
 
-   self.freezeClick = function () {
-       
+    self.freezeClick = function () {
+
         numClick++;
-       
-            if (numClick % 2 !== 0) {
-                uiController.bubbleTranslate(retVal.x,retVal.y,"pale-bubble");
-            }
-            
-            else {
-            
-            }
-       
-        }  
-   
-        function movingMedian(buffer, newValue) {
+
+        if (numClick % 2 !== 0) {
+            uiController.bubbleTranslate(transValues.x, transValues.y, "pale-bubble");
+            storedTransValues.x.lowerBound = transValues.x - accuracy;
+            storedTransValues.x.upperBound = transValues.x + accuracy;
+            storedTransValues.y.lowerBound = transValues.y - accuracy;
+            storedTransValues.y.upperBound = transValues.y + accuracy;
+        }
+    }
+
+    function movingMedian(buffer, newValue) {
             // ADVANCED FUNCTIONALITY
             // =================================================================
             // This function handles the Moving Median Filter
@@ -188,5 +215,93 @@ function SpiritLevelProcessor() {
 
             // Output: filteredValue
             //      This function should return the result of the moving average filter
-        }
+           var newX = newValue[0],
+               newY = newValue[1],
+               newZ = newValue[2],
+               filteredValues = {
+                x: 0,
+                y: 0,
+                z: 0
+            },
+                bufferSort = {
+                x: [],
+                y: [],
+                z: []
+            },
+               mid = 0,
+               medianX = 0,
+               medianY = 0,
+               medianZ = 0;
+			dimensions = uiController.bodyDimensions();
+               
+                //x block
+            if (buffer.x.length > 25) {
+                buffer.x.shift();
+            }
+                buffer.x[buffer.x.length] = newX;
+                bufferSort.x = buffer.x.slice();
+                bufferSort.x.sort(function(a, b){return a - b});
+            
+                //y block
+            if (buffer.y.length > 25) {
+                buffer.y.shift();
+            }
+                buffer.y[buffer.y.length] = newY;
+                bufferSort.y = buffer.y.slice();
+                bufferSort.y.sort(function(a, b){return a - b});
+                
+                //z block
+            if (buffer.z.length > 25) {
+                buffer.z.shift();
+            }
+                buffer.z[buffer.z.length] = newZ;
+                bufferSort.z = buffer.z.slice();
+                bufferSort.z.sort(function(a, b){return a - b});
+            
+                mid = Math.floor(buffer.x.length/2);
+            
+            if (mid % 2) {
+                medianX = (bufferSort.x[mid]) 
+                medianY = (bufferSort.y[mid]) 
+                medianZ = (bufferSort.z[mid]) 
+                            
+            }
+            else {
+                medianX = ((bufferSort.x[mid - 1] + bufferSort.x[mid])/2);
+                medianY = ((bufferSort.y[mid - 1] + bufferSort.y[mid])/2);
+                medianZ = ((bufferSort.z[mid - 1] + bufferSort.z[mid])/2);
+                
+            }
+            
+        filteredValues = {
+            x: medianX,
+            y: medianY,
+            z: medianZ
+        };
+        
+        displayAngle(filteredValues.x, filteredValues.y, filteredValues.z); //calls the function displayAngle and give it the 3 inputs based on the calculated averages.
+
+        return filteredValues;
+    }
+
+    self.swap = function () {
+        var swapButtonRef = document.getElementById("swapButton");
+        swapClick++;
+        if (swapClick % 2 === 0)
+            swapButtonRef.innerHTML = "Use Moving Median";
+        else
+            swapButtonRef.innerHTML = "Use Moving Average";
+    }
+
+    function swapButton() {
+        var bottomDivNode = document.getElementById("bottom-div"),
+            tempNode = document.createElement("button");
+        tempNode.setAttribute("id", "swapButton");
+        tempNode.setAttribute("class", "ui-btn ui-corner-all");
+        tempNode.setAttribute("onClick", "spiritLevelProcessor.swap()");
+        tempNode.innerHTML = ("Use Moving Median");
+        bottomDivNode.appendChild(tempNode);
+
+
+    }
 }
