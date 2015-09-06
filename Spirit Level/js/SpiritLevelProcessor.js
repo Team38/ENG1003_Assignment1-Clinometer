@@ -82,12 +82,12 @@ function SpiritLevelProcessor() {
             gY = aY / 9.8,
             gZ = aZ / 9.8;
 
-        //Declaring variables used in the buffer and alignment steps. Assigning the newly generated accelerometer valyes to one of these.
+        //Declaring variables used in the buffer and alignment steps. Assigning the newly generated accelerometer values to one of these.
         var rawMotionData = [gX, gY, gZ],
             filteredValuesStore;
 
         //Selecting whether the app should use movingAverage or movingMedian buffering depending on button click status determined from user input of swapButton.
-        //Assigns the retunred filtered values for use below.
+        //Assigns the returned filtered values for use below.
         if (swapClick % 2 === 0) {
             filteredValuesStore = movingAverage(bufferRecord, rawMotionData);
         } else {
@@ -219,9 +219,9 @@ function SpiritLevelProcessor() {
     }
 
     function movingMedian(buffer, newValue) {
-        // ADVANCED FUNCTIONALITY
-        // =================================================================
+        
         // This function handles the Moving Median Filter
+
         // Input:
         //      buffer
         //      The buffer in which the function will apply the moving to.
@@ -230,7 +230,11 @@ function SpiritLevelProcessor() {
         //      This should be the newest value that will be pushed into the buffer
 
         // Output: filteredValue
-        //      This function should return the result of the moving average filter
+        //      This function returns the result of the moving median filter
+
+        //Declaring variables to be used. Including sums for the x,y and z axis accelerometer valuse and assiging the new incoming accelerometer values to variables. 
+        
+        
         var newX = newValue[0],
             newY = newValue[1],
             newZ = newValue[2],
@@ -251,55 +255,78 @@ function SpiritLevelProcessor() {
         dimensions = uiController.bodyDimensions();
 
         //x block
+        //This statement restricts the length of the axis buffer to 25 values by deleting the oldest value when the buffer exeeds this limit. 
         if (buffer.x.length > 25) {
             buffer.x.shift();
         }
+        //Adding the new incoming accelerometer values to the last array position of the existing buffers, one for each accelerometer axis.
         buffer.x[buffer.x.length] = newX;
+        
+        //Cloning the buffer values into another array called bufferSort, so that bufferSort may be altered without affecting the oder of the incoming values
         bufferSort.x = buffer.x.slice();
+        
+        //Sorting the values in bufferSort
         bufferSort.x.sort(function (a, b) {
             return a - b
         });
 
         //y block
+        //This statement restricts the length of the axis buffer to 25 values by deleting the oldest value when the buffer exeeds this limit. 
         if (buffer.y.length > 25) {
             buffer.y.shift();
         }
         buffer.y[buffer.y.length] = newY;
+        
+        //Cloning the buffer values into another array called bufferSort, so that bufferSort may be altered without affecting the oder of the incoming values
         bufferSort.y = buffer.y.slice();
+        
+        //Sorting the values in bufferSort
         bufferSort.y.sort(function (a, b) {
             return a - b
         });
 
         //z block
-        if (buffer.z.length > 25) {
+        //This statement restricts the length of the axis buffer to 25 values by deleting the oldest value when the buffer exeeds this limit. 
+         if (buffer.z.length > 25) {
             buffer.z.shift();
         }
         buffer.z[buffer.z.length] = newZ;
+        
+        //Cloning the buffer values into another array called bufferSort, so that bufferSort may be altered without affecting the oder of the incoming values
         bufferSort.z = buffer.z.slice();
+        
+        //Sorting the values in bufferSort
         bufferSort.z.sort(function (a, b) {
             return a - b
         });
-
+        
+        
+        //Calculates how far into the array the middle value is (for arrays the size of 25 this will be constant but it is useful for the times preceding this). Only needs one calculation as all incoming arrays will be the         same length 
         mid = Math.floor(buffer.x.length / 2);
 
+        //If the array is an odd numbered length (ie. 5 or 7) the middle value can be taken as the median
         if (mid % 2) {
             medianX = (bufferSort.x[mid])
             medianY = (bufferSort.y[mid])
             medianZ = (bufferSort.z[mid])
 
-        } else {
+        } else 
+        //If the array is an even numbered length(ie. 8 or 20) the median is calculated by taking the number halfway between the two middle values
+        {
             medianX = ((bufferSort.x[mid - 1] + bufferSort.x[mid]) / 2);
             medianY = ((bufferSort.y[mid - 1] + bufferSort.y[mid]) / 2);
             medianZ = ((bufferSort.z[mid - 1] + bufferSort.z[mid]) / 2);
 
         }
 
+        //Storing the values in an object to be used for the displayAngle function
         filteredValues = {
             x: medianX,
             y: medianY,
             z: medianZ
         };
 
+        //Calling for the displayAngle function using the new median values.
         displayAngle(filteredValues.x, filteredValues.y, filteredValues.z); //calls the function displayAngle and give it the 3 inputs based on the calculated averages.
 
         return filteredValues;
@@ -309,9 +336,9 @@ function SpiritLevelProcessor() {
         //A function that increments a stored value for swapButton. If this value is even then the moving average is used, if odd moving median is used.
         //Setting DOM reference for the button.
         var swapButtonRef = document.getElementById("swapButton");
-        //Incrememting stored value. 
+        //Incrementing stored value. 
         swapClick++;
-        //Detecting the state of the button store and changin the text of the button to reflect this state. 
+        //Detecting the state of the button store and changing the text of the button to reflect this state. 
         if (swapClick % 2 === 0)
             swapButtonRef.innerHTML = "Use Moving Median";
         else
@@ -319,7 +346,7 @@ function SpiritLevelProcessor() {
     }
 
     function swapButton() {
-        //Function that creates the swapButton on the web app. Including assinging initial text and function trigger.
+        //Function that creates the swapButton on the web app. Including assigning initial text and function trigger.
         
         //Creating DOM reference for the bottom div where buttons are located and creates a temporary HTML button DOM node that will be appended here.
         var bottomDivNode = document.getElementById("bottom-div"),
